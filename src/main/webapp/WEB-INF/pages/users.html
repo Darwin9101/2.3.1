@@ -1,119 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users List</title>
+    <title>Список пользователей</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-
 <div class="container mt-5">
-    <h1 class="mb-4">Users List</h1>
+    <h1 class="mb-4">Пользователи</h1>
 
-    <!-- Форма для создания пользователя -->
-    <h2>Add user</h2>
+    <!-- Форма для добавления пользователя -->
+    <h2>Добавить пользователя</h2>
     <form action="/users" method="post">
         <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" class="form-control" required>
+            <label for="name">Имя</label>
+            <input type="text" class="form-control" id="name" name="name" required>
         </div>
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" class="form-control" required>
+            <input type="email" class="form-control" id="email" name="email" required>
         </div>
         <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" class="form-control" required>
+            <label for="password">Пароль</label>
+            <input type="password" class="form-control" id="password" name="password" required>
         </div>
-        <button type="submit" class="btn btn-primary">Create user</button>
+        <button type="submit" class="btn btn-primary">Добавить</button>
     </form>
 
     <hr>
 
     <!-- Список пользователей -->
-    <h2>All users</h2>
+    <h2>Список пользователей</h2>
     <table class="table">
         <thead>
         <tr>
-            <th>Name</th>
+            <th>ID</th>
+            <th>Имя</th>
             <th>Email</th>
-            <th>Actions</th>
+            <th>Действия</th>
         </tr>
         </thead>
         <tbody>
-        <!-- Здесь будет вывод списка пользователей -->
         <th:block th:each="user : ${users}">
             <tr>
-                <td th:text="${user.name}">Имя</td>
-                <td th:text="${user.email}">Email</td>
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.email}"></td>
                 <td>
-                    <form action="/users/delete" method="post" style="display:inline;">
-                        <input type="hidden" name="email" th:value="${user.email}" />
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                    <!-- Форма для обновления пользователя -->
+                    <form action="/users/update" method="post" class="d-inline">
+                        <input type="hidden" name="id" th:value="${user.id}" />
+                        <input type="text" name="name" th:value="${user.name}" required />
+                        <input type="email" name="email" th:value="${user.email}" required />
+                        <input type="password" name="password" required />
+                        <button type="submit" class="btn btn-warning">Обновить</button>
                     </form>
-                    <button class="btn btn-secondary"
-                            data-toggle="modal"
-                            data-target="#updateModal"
-                            data-name="${user.name}"
-                            data-email="${user.email}">
-                        Update
-                    </button>
+                    <!-- Форма для удаления пользователя -->
+                    <form action="/users/delete" method="post" class="d-inline">
+                        <input type="hidden" name="email" th:value="${user.email}" />
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
                 </td>
             </tr>
         </th:block>
         </tbody>
     </table>
-
-    <!-- Модальное окно для обновления пользователя -->
-    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="updateModalLabel">Изменить пользователя</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="/users/update" method="post">
-                        <div class="form-group">
-                            <label for="updateName">Имя</label>
-                            <input type="text" id="updateName" name="name" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="updateEmail">Email</label>
-                            <input type="email" id="updateEmail" name="email" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="updatePassword">Пароль</label>
-                            <input type="password" id="updatePassword" name="password" class="form-control" required>
-                        </div>
-                        <input type="hidden" name="nameOriginal" id="updateOriginalName">
-                        <button type="submit" class="btn btn-primary">Обновить пользователя</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
-<!-- Скрипты для Bootstrap -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    $('#updateModal').on('show.bs.modal', function(event) {
-        const button = $(event.relatedTarget);
-        const name = button.data('name');
-        const email = button.data('email');
-
-        const modal = $(this);
-        modal.find('#updateName').val(name);
-        modal.find('#updateEmail').val(email);
-        modal.find('#updateOriginalName').val(name);
-    });
-</script>
-
 </body>
 </html>

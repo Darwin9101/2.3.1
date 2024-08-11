@@ -3,8 +3,10 @@ package web.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import web.model.User;
 import web.service.UserService;
 
@@ -35,9 +37,13 @@ public class UserController {
     }
 
     @PostMapping("/update") // Маппинг для обновления пользователя
-    public String updateUser(@RequestParam String name, @RequestParam String email,
-                             @RequestParam String password, @RequestParam String nameOriginal) {
-        userService.updateUser(name, email, password, nameOriginal);
+    public String updateUser(@RequestParam Long id, @RequestParam String name, @RequestParam String email,
+                             @RequestParam String password) {
+        User user = userService.getUserByID(id);
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(password);
+        userService.updateUser(user);
         return "redirect:/users"; // Перенаправление после успешного обновления
     }
 

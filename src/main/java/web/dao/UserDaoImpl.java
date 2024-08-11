@@ -1,9 +1,6 @@
 package web.dao;
 
-import com.mysql.cj.xdevapi.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import web.model.User;
 
 import javax.persistence.EntityManager;
@@ -17,7 +14,6 @@ public class UserDaoImpl implements UserDao {
 
 
     @Override
-    @Transactional
     public void insertUser(String name, String email, String password) {
         User user = new User();
         user.setName(name);
@@ -27,24 +23,11 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    @Transactional
-    public void updateUser( String name, String email, String password, String nameOriginal) {
-        List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.name = :nameOriginal", User.class)
-                .setParameter("nameOriginal", nameOriginal)
-                .getResultList();
-
-        if (!users.isEmpty()) {
-            User user = users.get(0); // Если найдены пользователи, используйте первого из них
-            user.setName(name);
-            user.setEmail(email);
-            user.setPassword(password);
-            entityManager.merge(user);
-        }
-
+    public void updateUser(User user) {
+        entityManager.merge(user);
     }
 
     @Override
-    @Transactional
     public void deleteUser(String email) {
         List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
                 .setParameter("email", email)
@@ -58,8 +41,12 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    @Transactional
     public List<User> getUsers() {
         return entityManager.createQuery("select u from User u", User.class).getResultList();
+    }
+
+    @Override
+    public User getUserByID(Long id) {
+        return entityManager.find(User.class, id);
     }
 }
